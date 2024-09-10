@@ -1,0 +1,616 @@
+var square = [];
+
+square[0] = new Square("INÍCIO", "#FFFFFF", "inicio");
+square[1] = new Square("AliExpress", "#FF4500", "loja", 2000, -0.25, 40, {
+    descricao: "Investir em logística para aumentar as vendas em 10% na próxima rodada.",
+    efeito: function (p) {
+        p.lojas[1].impactoVendas += 0.10;
+        addAlert(p.nome + " investiu em logística na AliExpress, diminuindo o impacto negativo da taxa nas vendas em 10%.");
+    },
+    descricaoLoja: "<br><strong>Descrição:</strong> Gigante do varejo online, com sede na China, conecta compradores e vendedores de todo o mundo, oferecendo uma ampla gama de produtos a preços competitivos. <br><strong>Processos:</strong> Modelo de marketplace, com foco em logística eficiente e preços baixos. <br><strong>Departamentos:</strong> Operações, Logística, Tecnologia, Marketing, Atendimento ao Cliente. <br><strong>Produto/Serviço:</strong> Plataforma online de compra e venda de produtos. <br><strong>Desafios:</strong> Manter a competitividade em preços, otimizar a logística global, lidar com questões de falsificação e qualidade de produtos. <br><strong>Objetivo:</strong> Aumentar a participação no mercado global e fortalecer a confiança dos consumidores."
+}, 
+// Taxa
+{
+    min: 5,
+    max: 50,
+    ganhoPorcento: 1,
+    ganhoValor: 2000,
+    quedaAcima: 40,
+    quedaPorcento: 25
+});
+square[2] = new Square("Casa de Isenção Fiscal", "#FFFFFF", "especial", 0, 0, 0, function (p) {
+    var lojaIndex = prompt("Digite o número da loja que você deseja isentar:");
+    if (lojaIndex >= 1 && lojaIndex <= 28 && square[lojaIndex].tipo === "loja" && square[lojaIndex].dono === p.index) {
+        square[lojaIndex].taxaAtual = 0;
+        addAlert(p.nome + " isentou a loja " + square[lojaIndex].nome + " de impostos por uma rodada.");
+    } else {
+        addAlert("Número de loja inválido ou você não é o dono da loja.");
+    }
+});
+square[3] = new Square("Shopee", "#FF6347", "loja", 3000, -0.10, 30, {
+    descricao: "Fazer uma campanha de marketing que dobra a arrecadação na próxima rodada.",
+    efeito: function (p) {
+        p.proximaArrecadacaoDobrada = true;
+        addAlert(p.nome + " investiu em marketing na Shopee, dobrando a arrecadação na próxima rodada.");
+    },
+    descricaoLoja: "<br><strong>Descrição da Empresa:</strong> Plataforma de e-commerce com forte presença no Sudeste Asiático e em crescimento no Brasil, com foco em produtos de baixo custo e experiência de compra mobile-first. <br><strong>Processos:</strong> Marketplace com integração de pagamentos, entrega e ferramentas de marketing para vendedores. <br><strong>Departamentos:</strong> Operações, Marketing, Tecnologia, Atendimento ao Cliente, Financeiro. <br><strong>Produto/Serviço:</strong> Plataforma de e-commerce com foco em compras mobile. <br><strong>Desafios:</strong> Consolidar a marca no Brasil, enfrentar a concorrência de outros marketplaces, fidelizar vendedores e compradores. <br><strong>Objetivo:</strong> Tornar-se o principal marketplace do Brasil, oferecendo uma experiência de compra completa e acessível."
+}, 
+// Taxa
+{
+    min: 10,
+    max: 40,
+    ganhoPorcento: 5,
+    ganhoValor: 3000,
+    multaAcima: 30,
+    multaPorcento: 10
+});
+square[4] = new Square("Casa de Penalidade", "#FFFFFF", "especial", 0, 0, 0, function (p) {
+    if (jogadores[turno] && typeof jogadores[turno].pay === 'function') {
+        var multa = Math.round(jogadores[turno].money * 0.1);
+        jogadores[turno].pay(multa); 
+        addAlert(jogadores[turno].nome + " pagou R$" + multa + " de multa por má gestão tributária.");
+    } else {
+        console.error("Erro na Casa de Penalidade: jogador inválido no turno", turno);
+    }
+});
+square[5] = new Square("Shein", "#DDA0DD", "loja", 1000, -0.20, 35, {
+    descricao: "Expandir o catálogo de produtos para aumentar a arrecadação nas próximas rodadas.",
+    efeito: function (p) {
+        p.lojas[5].arrecadacaoBase += 500;
+        addAlert(p.nome + " expandiu o catálogo da Shein, aumentando a arrecadação base para R$" + p.lojas[5].arrecadacaoBase + ".");
+    },
+    descricaoLoja: "<br><strong>Descrição da Empresa:</strong> Varejista online de moda rápida, com foco em roupas femininas a preços acessíveis, conhecido pela ampla variedade de produtos e rápida atualização de tendências. <br><strong>Processos:</strong> Produção em massa, controle de estoque, logística global, marketing digital agressivo. <br><strong>Departamentos:</strong> Design, Produção, Logística, Marketing, Vendas. <br><strong>Produto/Serviço:</strong> Roupas femininas e acessórios de moda. <br><strong>Desafios:</strong> Manter a qualidade dos produtos com produção em larga escala, gerenciar a logística global, lidar com as críticas sobre sustentabilidade. <br><strong>Objetivo:</strong> Aumentar a base de clientes globalmente e expandir para novas categorias de produtos."
+}, 
+// Taxa
+{
+    min: 15,
+    max: 50,
+    ganhoPorcento: 1,
+    ganhoValor: 1000,
+    quedaAcima: 35,
+    quedaPorcento: 20
+});
+square[6] = new Square("Casa de Expansão de Taxação", "#FFFFFF", "especial", 0, 0, 0, function (p) {
+    p.taxaTotal += 5;
+    addAlert(p.nome + " ganhou 5% de taxa adicional.");
+});
+square[7] = new Square("Pix", "#40E0D0", "loja", 5000, -0.20, 30, {
+    descricao: "Implementar transações rápidas, que aumentam a arrecadação em 50% na rodada atual, mas com uma multa de 5% na próxima rodada.",
+    efeito: function (p) {
+        p.money += p.lojas[7].arrecadacaoBase * 0.5 * (1 + p.lojas[7].taxaAtual/100);
+        p.lojas[7].limiteTaxacao -= 5; 
+        addAlert(p.nome + " implementou transações rápidas no Pix, aumentando a arrecadação em 50% nesta rodada, mas reduzindo o limite de taxação em 5% para a próxima.");
+    },
+    descricaoLoja: "<br><strong>Descrição da Empresa:</strong> Sistema de pagamento instantâneo brasileiro, desenvolvido pelo Banco Central, permite transferências e pagamentos 24/7. <br><strong>Processos:</strong> Integração com instituições financeiras, processamento de transações em tempo real. <br><strong>Departamentos:</strong> Tecnologia, Segurança, Operações, Relações Institucionais. <br><strong>Produto/Serviço:</strong> Sistema de pagamentos instantâneos. <br><strong>Desafios:</strong> Garantir a segurança e a estabilidade do sistema, expandir a aceitação em estabelecimentos comerciais, promover a inclusão financeira. <br><strong>Objetivo:</strong> Tornar-se o principal meio de pagamento no Brasil, facilitando as transações financeiras e modernizando o sistema financeiro."
+}, 
+// Taxa
+{
+    min: 10,
+    max: 45,
+    ganhoPorcento: 5,
+    ganhoValor: 5000,
+    quedaAcima: 30,
+    quedaPorcento: 20
+});
+square[8] = new Square("Casa de Bônus de Arrecadação", "#FFFFFF", "especial", 0, 0, 0, function (p) {
+    p.money += 5000;
+    addAlert(p.nome + " recebeu R$5000 de bônus por boa gestão fiscal.");
+});
+square[9] = new Square("Mercado Livre", "#FFFF00", "loja", 2500, -0.15, 30, {
+    descricao: "Melhorar o suporte ao cliente, aumentando as vendas nas próximas rodadas.",
+    efeito: function (p) {
+        p.lojas[9].impactoVendas += 0.05; 
+        addAlert(p.nome + " melhorou o suporte ao cliente do Mercado Livre, diminuindo o impacto negativo da taxa nas vendas em 5%.");
+    },
+    descricaoLoja: "<br><strong>Descrição da Empresa:</strong> Empresa líder em tecnologia para e-commerce e serviços financeiros na América Latina, opera um marketplace com grande variedade de produtos e serviços. <br><strong>Processos:</strong> Marketplace com foco em logística, pagamentos online seguros e soluções financeiras para vendedores e compradores. <br><strong>Departamentos:</strong> Operações, Logística, Tecnologia, Marketing, Financeiro, Atendimento ao Cliente. <br><strong>Produto/Serviço:</strong> Plataforma de e-commerce, soluções de pagamento e crédito. <br><strong>Desafios:</strong> Manter a liderança no mercado latino-americano, expandir a oferta de serviços financeiros, lidar com a concorrência de outros players globais. <br><strong>Objetivo:</strong> Tornar-se uma plataforma digital completa, integrando e-commerce, serviços financeiros e logística em um único ecossistema."
+}, 
+// Taxa
+{
+    min: 5,
+    max: 50,
+    ganhoPorcento: 5,
+    ganhoValor: 2500,
+    quedaAcima: 30,
+    quedaPorcento: 15
+});
+square[10] = new Square("Casa de Auditoria Fiscal", "#FFFFFF", "especial", 0, 0, 0, function (p) {
+    for (var i = 1; i < square.length; i++) {
+        if (square[i].tipo === "loja" && square[i].dono === p.index && square[i].taxaAtual > 30) {
+            p.lojas[i].arrecadacaoBase *= 0.9;
+            addAlert("Auditoria Fiscal: A arrecadação da " + square[i].nome + " foi reduzida em 10% por excesso de impostos.");
+        }
+    }
+});
+square[11] = new Square("Amazon", "#008000", "loja", 4000, -0.20, 35, {
+    descricao: "Melhorar a logística para reduzir a queda nas vendas em 10%.",
+    efeito: function (p) {
+        p.lojas[11].impactoVendas += 0.10; 
+        addAlert(p.nome + " melhorou a logística da Amazon, diminuindo o impacto negativo da taxa nas vendas em 10%.");
+    },
+    descricaoLoja: "<br><strong>Descrição da Empresa:</strong> Gigante global de tecnologia, com atuação em e-commerce, computação em nuvem, streaming e inteligência artificial. <br><strong>Processos:</strong> Logística e entrega altamente otimizadas, foco em experiência do cliente e desenvolvimento de tecnologias inovadoras. <br><strong>Departamentos:</strong> Operações, Logística, Tecnologia, Marketing, Vendas,  Atendimento ao Cliente, Pesquisa e Desenvolvimento. <br><strong>Produto/Serviço:</strong> Plataforma de e-commerce, serviços de computação em nuvem, streaming de vídeo e música, dispositivos eletrônicos. <br><strong>Desafios:</strong> Manter a liderança global em diferentes setores, lidar com as críticas sobre práticas trabalhistas e impacto ambiental, expandir para novos mercados. <br><strong>Objetivo:</strong> Tornar-se a empresa mais centrada no cliente do mundo, oferecendo produtos e serviços inovadores e convenientes."
+}, 
+// Taxa
+{
+    min: 5,
+    max: 50,
+    ganhoPorcento: 5,
+    ganhoValor: 4000,
+    quedaAcima: 35,
+    quedaPorcento: 20
+});
+square[12] = new Square("Casa de Inovação", "#FFFFFF", "especial", 0, 0, 0, function (p) {
+    var lojaIndex = prompt("Digite o número da loja que você deseja inovar:");
+    if (lojaIndex >= 1 && lojaIndex <= 28 && square[lojaIndex].tipo === "loja" && square[lojaIndex].dono === p.index) {
+        p.lojas[lojaIndex].arrecadacaoBase *= 1.1;
+        addAlert(p.nome + " investiu em inovação na loja " + square[lojaIndex].nome + ", aumentando a arrecadação em 10% nas próximas rodadas.");
+    } else {
+        addAlert("Número de loja inválido ou você não é o dono da loja.");
+    }
+});
+square[13] = new Square("Americanas", "#800000", "loja", 1500, -0.30, 40, {
+    descricao: "Reduzir as taxas em 5% para aumentar as vendas em 15%.",
+    efeito: function (p) {
+        p.lojas[13].taxaAtual -= 5; 
+        p.lojas[13].impactoVendas += 0.15; 
+        addAlert(p.nome + " reduziu as taxas da Americanas em 5% para aumentar as vendas em 15%.");
+    },
+    descricaoLoja: "<br><strong>Descrição da Empresa:</strong> Tradicional varejista brasileira, com lojas físicas e online, oferece ampla variedade de produtos, de eletrônicos a vestuário. <br><strong>Processos:</strong> Gestão de lojas físicas e online, logística e entrega, marketing e vendas omnichannel. <br><strong>Departamentos:</strong> Vendas, Marketing, Operações, Logística, Tecnologia,  Atendimento ao Cliente, Recursos Humanos. <br><strong>Produto/Serviço:</strong> Varejo de produtos diversos. <br><strong>Desafios:</strong> Adaptar-se às novas tecnologias e ao e-commerce, integrar as operações online e offline, competir com novos players digitais. <br><strong>Objetivo:</strong> Manter a relevância no mercado brasileiro, oferecendo uma experiência de compra completa e integrada."
+}, 
+// Taxa
+{
+    min: 10,
+    max: 50,
+    ganhoPorcento: 1,
+    ganhoValor: 1500,
+    quedaAcima: 40,
+    quedaPorcento: 30
+});
+square[14] = new Square("Casa de Crise Econômica", "#FFFFFF", "especial", 0, 0, 0, function (p) {
+    for (var i = 1; i < square.length; i++) {
+        if (square[i].tipo === "loja") {
+            square[i].arrecadacaoBase *= 0.85;
+            addAlert("Crise Econômica: A arrecadação da " + square[i].nome + " foi reduzida em 15%.");
+        }
+    }
+});
+square[15] = new Square("Netshoes", "#000080", "loja", 3000, -0.15, 25, {
+    descricao: "Investir em tecnologia para melhorar a experiência de compra, dobrando a arrecadação na próxima rodada.",
+    efeito: function (p) {
+        p.proximaArrecadacaoDobrada = true;
+        addAlert(p.nome + " investiu em tecnologia na Netshoes, dobrando a arrecadação na próxima rodada.");
+    },
+    descricaoLoja: "<br><strong>Descrição da Empresa:</strong> Varejista online de artigos esportivos, com foco em calçados, roupas e equipamentos esportivos de diversas marcas. <br><strong>Processos:</strong> E-commerce com foco em experiência do cliente, logística especializada em produtos esportivos, marketing direcionado a públicos específicos. <br><strong>Departamentos:</strong> Vendas, Marketing, Logística, Tecnologia, Atendimento ao Cliente, Compras. <br><strong>Produto/Serviço:</strong> Artigos esportivos de diversas marcas. <br><strong>Desafios:</strong> Manter a liderança no mercado de artigos esportivos online, oferecer uma experiência de compra personalizada, lidar com a sazonalidade do mercado. <br><strong>Objetivo:</strong> Tornar-se a referência em artigos esportivos online, oferecendo a maior variedade de produtos e a melhor experiência de compra para os clientes."
+}, 
+// Taxa
+{
+    min: 10,
+    max: 40,
+    ganhoPorcento: 5,
+    ganhoValor: 3000,
+    quedaAcima: 25,
+    quedaPorcento: 15
+});
+square[16] = new Square("Casa de Investimento Estrangeiro", "#FFFFFF", "especial", 0, 0, 0, function (p) {
+    var lojaIndex = prompt("Digite o número da loja que você deseja receber o investimento:");
+    if (lojaIndex >= 1 && lojaIndex <= 28 && square[lojaIndex].tipo === "loja" && square[lojaIndex].dono === p.index) {
+        p.lojas[lojaIndex].proximoBonusInvestimento = true;
+        addAlert(p.nome + " atraiu investimento estrangeiro para a loja " + square[lojaIndex].nome + ", aumentando a arrecadação em 20% na próxima rodada.");
+    } else {
+        addAlert("Número de loja inválido ou você não é o dono da loja.");
+    }
+});
+square[17] = new Square("iFood", "#32CD32", "loja", 4000, -0.10, 30, {
+    descricao: "Investir em inovações tecnológicas, aumentando as vendas em 20% nas próximas rodadas.",
+    efeito: function (p) {
+        p.lojas[17].arrecadacaoBase *= 1.2; 
+        addAlert(p.nome + " investiu em inovações tecnológicas no iFood, aumentando as vendas em 20% nas próximas rodadas.");
+    },
+    descricaoLoja: "<br><strong>Descrição da Empresa:</strong> Plataforma líder em delivery de comida online na América Latina, conecta restaurantes e clientes, oferecendo opções variadas de restaurantes e facilidade de pedido. <br><strong>Processos:</strong> Marketplace com foco em tecnologia, logística de entrega rápida, marketing e parcerias com restaurantes. <br><strong>Departamentos:</strong> Tecnologia, Operações, Logística, Marketing, Vendas,  Atendimento ao Cliente,  Relações com Restaurantes. <br><strong>Produto/Serviço:</strong> Plataforma de delivery de comida online. <br><strong>Desafios:</strong> Manter a liderança no mercado de food delivery, expandir para novas categorias de delivery, garantir a qualidade dos serviços prestados pelos restaurantes parceiros. <br><strong>Objetivo:</strong> Tornar-se a plataforma líder em delivery online, oferecendo a melhor experiência para clientes e restaurantes."
+}, 
+// Taxa
+{
+    min: 15,
+    max: 50,
+    ganhoPorcento: 5,
+    ganhoValor: 4000,
+    quedaAcima: 30,
+    quedaPorcento: 10
+});
+square[18] = new Square("eBay", "#FFD700", "loja", 2500, -0.20, 30, {
+    descricao: "Investir em expansão internacional, aumentando as vendas em 25% na próxima rodada.",
+    efeito: function (p) {
+        p.lojas[18].arrecadacaoBase *= 1.25; 
+        addAlert(p.nome + " expandiu o eBay internacionalmente, aumentando as vendas em 25% na próxima rodada.");
+    },
+    descricaoLoja: "<br><strong>Descrição da Empresa:</strong> Pionera no e-commerce global, conecta compradores e vendedores do mundo todo, com foco em leilões online e venda de produtos novos e usados. <br><strong>Processos:</strong> Marketplace com sistema de leilões, pagamentos online, ferramentas para vendedores e sistema de reputação para compradores e vendedores. <br><strong>Departamentos:</strong> Operações, Tecnologia, Marketing, Vendas, Atendimento ao Cliente, Segurança. <br><strong>Produto/Serviço:</strong> Plataforma de e-commerce com foco em leilões e venda de produtos diversos. <br><strong>Desafios:</strong> Manter a relevância em um mercado cada vez mais competitivo, adaptar-se às novas tendências de e-commerce, lidar com fraudes e disputas entre compradores e vendedores. <br><strong>Objetivo:</strong> Reconquistar a liderança no mercado global de e-commerce, oferecendo uma plataforma segura, confiável e inovadora para compradores e vendedores."
+}, 
+// Taxa
+{
+    min: 10,
+    max: 40,
+    ganhoPorcento: 5,
+    ganhoValor: 2500,
+    quedaAcima: 30,
+    quedaPorcento: 20
+});
+square[19] = new Square("Growth", "#87CEEB", "loja", 1000, -0.20, 25, {
+    descricao: "Aumentar a produção, aumentando a arrecadação base em R$500.",
+    efeito: function (p) {
+        p.lojas[19].arrecadacaoBase += 500;
+        addAlert(p.nome + " aumentou a produção da Growth, aumentando a arrecadação base para R$" + p.lojas[19].arrecadacaoBase + ".");
+    },
+    descricaoLoja: "<br><strong>Descrição da Empresa:</strong> Startup fictícia em fase de crescimento acelerado, com foco em soluções inovadoras de tecnologia para o mercado financeiro. <br><strong>Processos:</strong> Desenvolvimento ágil de software, foco em inovação e escalabilidade, busca por investimento para expansão. <br><strong>Departamentos:</strong> Tecnologia, Produto, Marketing, Vendas,  Recursos Humanos. <br><strong>Produto/Serviço:</strong> Software para gestão de investimentos. <br><strong>Desafios:</strong> Desenvolver um produto escalável e competitivo, atrair investimento para financiar o crescimento, lidar com a rápida expansão da equipe. <br><strong>Objetivo:</strong> Consolidar-se como líder no mercado de tecnologia financeira, oferecendo soluções inovadoras e disruptivas."
+}, 
+// Taxa
+{
+    min: 5,
+    max: 35,
+    ganhoPorcento: 1,
+    ganhoValor: 1000,
+    quedaAcima: 25,
+    quedaPorcento: 20
+});
+square[20] = new Square("PARADA LIVRE", "#FFFFFF", "paradaLivre");
+square[21] = new Square("Netflix", "#E62020", "loja", 4000, -0.15, 30, {
+    descricao: "Investir em conteúdo original, aumentando a arrecadação base em R$1000.",
+    efeito: function (p) {
+        p.lojas[21].arrecadacaoBase += 1000;
+        addAlert(p.nome + " investiu em conteúdo original na Netflix, aumentando a arrecadação base para R$" + p.lojas[21].arrecadacaoBase + ".");
+    },
+    descricaoLoja: "<br><strong>Descrição da Empresa:</strong> Plataforma global de streaming de vídeo, oferece filmes, séries e documentários, com foco em conteúdo original e personalizado. <br><strong>Processos:</strong> Produção de conteúdo original, licenciamento de conteúdo, desenvolvimento de tecnologias de streaming, marketing digital e análise de dados para personalização. <br><strong>Departamentos:</strong> Conteúdo, Produção, Tecnologia, Marketing,  Dados. <br><strong>Produto/Serviço:</strong> Streaming de vídeo por assinatura. <br><strong>Desafios:</strong> Manter o crescimento da base de assinantes, competir com outros serviços de streaming, produzir conteúdo original de alta qualidade, expandir para novos mercados. <br><strong>Objetivo:</strong> Tornar-se o principal serviço de entretenimento do mundo, oferecendo conteúdo diversificado e personalizado para todos os públicos."
+}, 
+// Taxa
+{
+    min: 10,
+    max: 45,
+    ganhoPorcento: 5,
+    ganhoValor: 4000,
+    quedaAcima: 30,
+    quedaPorcento: 15
+});
+square[22] = new Square("Disney+", "#00FFFF", "loja", 3500, -0.20, 40, {
+    descricao: "Lançar um plano familiar, dobrando a arrecadação na próxima rodada.",
+    efeito: function (p) {
+        p.proximaArrecadacaoDobrada = true;
+        addAlert(p.nome + " lançou um plano familiar no Disney+, dobrando a arrecadação na próxima rodada.");
+    },
+    descricaoLoja: "<br><strong>Descrição da Empresa:</strong> Serviço de streaming de vídeo da Disney, oferece filmes, séries e desenhos animados da Disney, Pixar, Marvel, Star Wars e National Geographic. <br><strong>Processos:</strong>  Licenciamento e produção de conteúdo, desenvolvimento de tecnologias de streaming, marketing digital. <br><strong>Departamentos:</strong> Conteúdo, Produção, Tecnologia, Marketing. <br><strong>Produto/Serviço:</strong> Streaming de vídeo por assinatura. <br><strong>Desafios:</strong>  Competir com outros serviços de streaming, expandir a base de assinantes globalmente, produzir conteúdo original que atraia diferentes públicos. <br><strong>Objetivo:</strong> Tornar-se um dos principais serviços de streaming do mundo, oferecendo conteúdo familiar e de alta qualidade."
+}, 
+// Taxa
+{
+    min: 15,
+    max: 50,
+    ganhoPorcento: 5,
+    ganhoValor: 3500,
+    quedaAcima: 40,
+    quedaPorcento: 20
+});
+square[23] = new Square("TikTok", "#000000", "loja", 3000, -0.15, 30, {
+    descricao: "Fechar uma parceria com influenciadores, dobrando a arrecadação nas próximas rodadas.",
+    efeito: function (p) {
+        p.proximaArrecadacaoDobrada = true;
+        addAlert(p.nome + " fechou uma parceria com influenciadores no TikTok, dobrando a arrecadação nas próximas rodadas.");
+    },
+    descricaoLoja: "<br><strong>Descrição da Empresa:</strong> Rede social de vídeos curtos, popular entre jovens, permite criar, compartilhar e assistir a vídeos curtos de diversos gêneros. <br><strong>Processos:</strong>  Desenvolvimento de tecnologias de criação e compartilhamento de vídeos, moderação de conteúdo, marketing e parcerias com criadores de conteúdo. <br><strong>Departamentos:</strong> Tecnologia, Produto, Marketing, Comunidade. <br><strong>Produto/Serviço:</strong> Rede social de vídeos curtos. <br><strong>Desafios:</strong>  Manter o engajamento dos usuários, lidar com questões de privacidade e segurança, monetizar a plataforma. <br><strong>Objetivo:</strong> Tornar-se a principal plataforma de entretenimento para a geração Z, impulsionando a criatividade e a conexão entre as pessoas."
+}, 
+// Taxa
+{
+    min: 5,
+    max: 40,
+    ganhoPorcento: 1,
+    ganhoValor: 3000,
+    quedaAcima: 30,
+    quedaPorcento: 15
+});
+square[24] = new Square("Kwai", "#FF0000", "loja", 3500, -0.20, 30, {
+    descricao: "Investir em ferramentas de criação de conteúdo, aumentando a arrecadação em 10% nas próximas rodadas.",
+    efeito: function (p) {
+        p.lojas[24].arrecadacaoBase *= 1.1;
+        addAlert(p.nome + " investiu em ferramentas de criação de conteúdo no Kwai, aumentando a arrecadação em 10% nas próximas rodadas.");
+    },
+    descricaoLoja: "<br><strong>Descrição da Empresa:</strong>  Rede social de vídeos curtos, com foco em mercados emergentes, oferece recompensas financeiras para criadores de conteúdo. <br><strong>Processos:</strong>  Desenvolvimento de tecnologias de criação e compartilhamento de vídeos, sistema de recompensas, marketing e parcerias com criadores de conteúdo. <br><strong>Departamentos:</strong> Tecnologia, Produto, Marketing, Comunidade. <br><strong>Produto/Serviço:</strong> Rede social de vídeos curtos com programa de recompensas. <br><strong>Desafios:</strong>  Competir com o TikTok, atrair e fidelizar criadores de conteúdo, expandir para novos mercados. <br><strong>Objetivo:</strong> Tornar-se a principal rede social de vídeos curtos em mercados emergentes, democratizando o acesso à criação de conteúdo e oferecendo oportunidades de monetização."
+}, 
+// Taxa
+{
+    min: 10,
+    max: 45,
+    ganhoPorcento: 5,
+    ganhoValor: 3500,
+    quedaAcima: 30,
+    quedaPorcento: 20
+});
+square[25] = new Square("Uber", "#0000FF", "loja", 3000, -0.25, 35, {
+    descricao: "Investir em carros autônomos, aumentando a arrecadação em 30% nas próximas rodadas.",
+    efeito: function (p) {
+        p.lojas[25].arrecadacaoBase *= 1.3;
+        addAlert(p.nome + " investiu em carros autônomos na Uber, aumentando a arrecadação em 30% nas próximas rodadas.");
+    },
+    descricaoLoja: "<br><strong>Descrição da Empresa:</strong>  Plataforma de transporte privado urbano, conecta motoristas e passageiros, oferecendo corridas convenientes e acessíveis. <br><strong>Processos:</strong>  Desenvolvimento de aplicativo, gerenciamento de motoristas, sistema de pagamentos, atendimento ao cliente. <br><strong>Departamentos:</strong> Tecnologia, Operações, Marketing, Atendimento ao Cliente. <br><strong>Produto/Serviço:</strong> Transporte privado urbano por aplicativo. <br><strong>Desafios:</strong> Lidar com a regulamentação do transporte privado, garantir a segurança de passageiros e motoristas, competir com outros serviços de transporte, desenvolver tecnologias de carros autônomos. <br><strong>Objetivo:</strong> Revolucionar o transporte urbano, oferecendo um serviço mais eficiente, acessível e sustentável."
+}, 
+// Taxa
+{
+    min: 10,
+    max: 50,
+    ganhoPorcento: 5,
+    ganhoValor: 3000,
+    quedaAcima: 35,
+    quedaPorcento: 25
+});
+square[26] = new Square("Casas Bahia", "#808080", "loja", 2000, -0.20, 35, {
+    descricao: "Iniciar uma campanha de descontos, aumentando as vendas em 15% nas próximas rodadas.",
+    efeito: function (p) {
+        p.lojas[26].impactoVendas += 0.15;
+        addAlert(p.nome + " iniciou uma campanha de descontos nas Casas Bahia, aumentando as vendas em 15% nas próximas rodadas.");
+    },
+    descricaoLoja: "<br><strong>Descrição da Empresa:</strong> Tradicional varejista brasileira, com foco em eletrodomésticos, móveis e eletrônicos, com forte presença em lojas físicas e online. <br><strong>Processos:</strong> Gestão de lojas físicas e online, logística e entrega, marketing e vendas omnichannel, crédito e financiamento para clientes. <br><strong>Departamentos:</strong> Vendas, Marketing, Operações, Logística,  Financeiro, Atendimento ao Cliente, Recursos Humanos. <br><strong>Produto/Serviço:</strong> Varejo de eletrodomésticos, móveis e eletrônicos. <br><strong>Desafios:</strong> Manter a competitividade em um mercado em constante mudança, integrar as operações online e offline, oferecer um bom serviço de atendimento ao cliente, gerenciar o risco de crédito. <br><strong>Objetivo:</strong> Consolidar a liderança no mercado brasileiro de varejo, oferecendo a melhor experiência de compra para os clientes."
+}, 
+// Taxa
+{
+    min: 10,
+    max: 50,
+    ganhoPorcento: 5,
+    ganhoValor: 2000,
+    quedaAcima: 35,
+    quedaPorcento: 20
+});
+square[27] = new Square("Zara", "#FFC300", "loja", 3500, -0.25, 40, {
+    descricao: "Expandir o marketing digital, aumentando as vendas em 15% nas próximas rodadas.",
+    efeito: function (p) {
+        p.lojas[27].arrecadacaoBase *= 1.15;
+        addAlert(p.nome + " expandiu o marketing digital da Zara, aumentando as vendas em 15% nas próximas rodadas.");
+    },
+    descricaoLoja: "<br><strong>Descrição da Empresa:</strong>  Gigante espanhol de moda rápida, com lojas físicas em todo o mundo, conhecido pela rápida adaptação às tendências e produção eficiente. <br><strong>Processos:</strong> Design, produção, logística verticalmente integrada, controle de estoque, foco em experiência do cliente em lojas físicas. <br><strong>Departamentos:</strong> Design, Produção, Logística, Vendas, Marketing. <br><strong>Produto/Serviço:</strong> Roupas e acessórios de moda. <br><strong>Desafios:</strong>  Manter o ritmo de produção e entrega, adaptar-se às novas tecnologias e ao e-commerce, lidar com as críticas sobre sustentabilidade. <br><strong>Objetivo:</strong>  Manter a liderança no mercado global de moda rápida, oferecendo produtos de alta qualidade e design a preços acessíveis."
+}, 
+// Taxa
+{
+    min: 15,
+    max: 50,
+    ganhoPorcento: 5,
+    ganhoValor: 3500,
+    quedaAcima: 40,
+    quedaPorcento: 25
+});
+square[28] = new Square("WebMotors", "#800080", "loja", 3000, -0.20, 30, {
+    descricao: "Investir em otimização da plataforma, dobrando a arrecadação na próxima rodada.",
+    efeito: function (p) {
+        p.proximaArrecadacaoDobrada = true;
+        addAlert(p.nome + " otimizou a plataforma da WebMotors, dobrando a arrecadação na próxima rodada.");
+    },
+    descricaoLoja: "<br><strong>Descrição da Empresa:</strong>  Plataforma online líder em classificados de veículos no Brasil, conecta compradores e vendedores de carros, motos e outros veículos. <br><strong>Processos:</strong>  Gerenciamento de anúncios, desenvolvimento de tecnologias para pesquisa e comparação de veículos, marketing e vendas. <br><strong>Departamentos:</strong> Tecnologia, Produto, Marketing, Vendas,  Atendimento ao Cliente. <br><strong>Produto/Serviço:</strong>  Plataforma online de classificados de veículos. <br><strong>Desafios:</strong>  Manter a liderança no mercado, enfrentar a concorrência de novas plataformas, oferecer uma experiência de usuário completa e intuitiva. <br><strong>Objetivo:</strong>  Tornar-se a plataforma definitiva para compra, venda e pesquisa de veículos no Brasil, conectando compradores e vendedores de forma eficiente."
+}, 
+// Taxa
+{
+    min: 5,
+    max: 45,
+    ganhoPorcento: 5,
+    ganhoValor: 3000,
+    quedaAcima: 30,
+    quedaPorcento: 20
+});
+square[29] = new Square("LG", "#228B22", "loja", 4000, -0.25, 35, {
+    descricao: "Investir em pesquisa e desenvolvimento, aumentando o valor arrecadado em 20% nas próximas rodadas.",
+    efeito: function (p) {
+        p.lojas[29].arrecadacaoBase *= 1.2;
+        addAlert(p.nome + " investiu em pesquisa e desenvolvimento na LG, aumentando a arrecadação em 20% nas próximas rodadas.");
+    },
+    descricaoLoja: "<br><strong>Descrição da Empresa:</strong>  Multinacional sul-coreana de eletrônicos, produz e comercializa smartphones, TVs, eletrodomésticos e outros produtos. <br><strong>Processos:</strong>  Produção em massa, pesquisa e desenvolvimento de novas tecnologias, logística global, marketing e vendas. <br><strong>Departamentos:</strong>  Produção, Pesquisa e Desenvolvimento, Logística, Marketing, Vendas,  Atendimento ao Cliente. <br><strong>Produto/Serviço:</strong>  Eletrônicos e eletrodomésticos. <br><strong>Desafios:</strong>  Competir com outras marcas globais de eletrônicos, inovar constantemente para oferecer produtos diferenciados, lidar com as flutuações do mercado global. <br><strong>Objetivo:</strong> Consolidar-se como uma marca líder em tecnologia e inovação, oferecendo produtos de alta qualidade e design."
+}, 
+// Taxa
+{
+    min: 10,
+    max: 45,
+    ganhoPorcento: 5,
+    ganhoValor: 4000,
+    quedaAcima: 35,
+    quedaPorcento: 25
+});
+square[30] = new Square("VÁ PARA A CADEIA", "#FFFFFF", "cadeia");
+square[31] = new Square("Samsung", "#00CED1", "loja", 3500, -0.15, 30, {
+    descricao: "Investir em inovação de produtos, dobrando o valor arrecadado nas próximas rodadas.",
+    efeito: function (p) {
+        p.proximaArrecadacaoDobrada = true;
+        addAlert(p.nome + " inovou nos produtos da Samsung, dobrando a arrecadação nas próximas rodadas.");
+    },
+    descricaoLoja: "<br><strong>Descrição da Empresa:</strong>  Multinacional sul-coreana de eletrônicos, líder global em smartphones, TVs, chips de memória e outros produtos. <br><strong>Processos:</strong>  Produção em massa, pesquisa e desenvolvimento de novas tecnologias, logística global, marketing e vendas. <br><strong>Departamentos:</strong>  Produção, Pesquisa e Desenvolvimento, Logística, Marketing, Vendas,  Atendimento ao Cliente. <br><strong>Produto/Serviço:</strong>  Eletrônicos e eletrodomésticos. <br><strong>Desafios:</strong>  Manter a liderança global em um mercado competitivo, inovar constantemente para oferecer produtos de ponta, lidar com questões de segurança e privacidade de dados. <br><strong>Objetivo:</strong>  Inspirar o mundo com tecnologias inovadoras que criem um futuro melhor."
+}, 
+// Taxa
+{
+    min: 10,
+    max: 50,
+    ganhoPorcento: 5,
+    ganhoValor: 3500,
+    quedaAcima: 30,
+    quedaPorcento: 15
+});
+square[32] = new Square("Natura", "#6B8E23", "loja", 2000, -0.15, 25, {
+    descricao: "Investir em sustentabilidade, aumentando as vendas em 15% nas próximas rodadas.",
+    efeito: function (p) {
+        p.lojas[32].arrecadacaoBase *= 1.15;
+        addAlert(p.nome + " investiu em sustentabilidade na Natura, aumentando as vendas em 15% nas próximas rodadas.");
+    },
+    descricaoLoja: "<br><strong>Descrição da Empresa:</strong> Empresa brasileira de cosméticos, com foco em produtos naturais e sustentáveis, atua com venda direta e lojas físicas.<br><strong>Processos:</strong> Desenvolvimento de produtos com ingredientes naturais, produção sustentável, logística, venda direta por meio de consultoras, marketing e branding.<br><strong>Departamentos:</strong> Pesquisa e Desenvolvimento, Produção, Logística, Vendas, Marketing, Sustentabilidade.<br><strong>Produto/Serviço:</strong> Cosméticos, produtos de higiene pessoal e perfumaria.<br><strong>Desafios:</strong> Manter o compromisso com a sustentabilidade, expandir a venda direta e o e-commerce, inovar em produtos e embalagens.<br><strong>Objetivo:</strong>  Promover o bem-estar bem, um conceito que une o bem estar pessoal ao bem estar coletivo, por meio de seus produtos e práticas sustentáveis."
+},
+// Taxa
+{
+    min: 5,
+    max: 40,
+    ganhoPorcento: 1,
+    ganhoValor: 2000,
+    quedaAcima: 25,
+    quedaPorcento: 15
+});
+square[33] = new Square("Avon", "#FFA07A", "loja", 2500, -0.10, 30, {
+    descricao: "Aumentar a rede de revendedores, dobrando a arrecadação na próxima rodada.",
+    efeito: function (p) {
+        p.proximaArrecadacaoDobrada = true;
+        addAlert(p.nome + " expandiu a rede de revendedores da Avon, dobrando a arrecadação na próxima rodada.");
+    },
+    descricaoLoja: "<br><strong>Descrição da Empresa:</strong> Empresa multinacional de cosméticos, com foco em venda direta por meio de revendedoras, oferece produtos de beleza, higiene pessoal e perfumaria.<br><strong>Processos:</strong> Produção, logística, treinamento e gerenciamento de revendedoras, marketing e campanhas de venda.<br><strong>Departamentos:</strong> Produção, Logística, Vendas, Marketing,  Recursos Humanos.<br><strong>Produto/Serviço:</strong> Cosméticos, produtos de higiene pessoal e perfumaria.<br><strong>Desafios:</strong> Adaptar-se ao e-commerce e às novas tecnologias, fortalecer a rede de revendedoras, inovar em produtos e estratégias de venda.<br><strong>Objetivo:</strong> Empoderar as mulheres por meio de oportunidades de negócio e produtos de beleza que promovem a autoestima."
+}, 
+// Taxa
+{
+    min: 10,
+    max: 45,
+    ganhoPorcento: 5,
+    ganhoValor: 2500,
+    quedaAcima: 30,
+    quedaPorcento: 10
+});
+square[34] = new Square("O'Boticário", "#FA8072", "loja", 1500, -0.10, 20, {
+    descricao: "Aumentar a produção nacional, aumentando as vendas em 15% nas próximas rodadas.",
+    efeito: function (p) {
+        p.lojas[34].arrecadacaoBase *= 1.15;
+        addAlert(p.nome + " aumentou a produção nacional do O'Boticário, aumentando as vendas em 15% nas próximas rodadas.");
+    },
+    descricaoLoja: "<br><strong>Descrição da Empresa:</strong> Empresa brasileira de cosméticos, perfumaria e produtos de higiene pessoal, com forte presença em lojas físicas e online.<br><strong>Processos:</strong> Desenvolvimento de produtos, produção, logística, gestão de lojas físicas e online, marketing e branding.<br><strong>Departamentos:</strong> Pesquisa e Desenvolvimento, Produção, Logística, Vendas, Marketing,  Recursos Humanos.<br><strong>Produto/Serviço:</strong> Cosméticos, perfumaria e produtos de higiene pessoal.<br><strong>Desafios:</strong> Manter a qualidade dos produtos, inovar em fragrâncias e produtos, fortalecer a presença online, expandir para novos mercados.<br><strong>Objetivo:</strong>  Despertar a beleza e a autoexpressão nas pessoas, por meio de produtos e experiências sensoriais."
+}, 
+// Taxa
+{
+    min: 5,
+    max: 40,
+    ganhoPorcento: 1,
+    ganhoValor: 1500,
+    quedaAcima: 20,
+    quedaPorcento: 10
+});
+square[35] = new Square("Renner", "#DA70D6", "loja", 3000, -0.20, 40, {
+    descricao: "Expandir a presença online, dobrando a arrecadação na próxima rodada.",
+    efeito: function (p) {
+        p.proximaArrecadacaoDobrada = true;
+        addAlert(p.nome + " expandiu a presença online da Renner, dobrando a arrecadação na próxima rodada.");
+    },
+    descricaoLoja: "<br><strong>Descrição da Empresa:</strong>  Varejista brasileira de moda, com foco em roupas, calçados e acessórios, atua com lojas físicas e online. <br><strong>Processos:</strong>  Design, produção, logística, gestão de lojas físicas e online, marketing e vendas omnichannel. <br><strong>Departamentos:</strong>  Design, Produção, Logística, Vendas, Marketing, Tecnologia,  Atendimento ao Cliente, Recursos Humanos. <br><strong>Produto/Serviço:</strong>  Roupas, calçados e acessórios de moda. <br><strong>Desafios:</strong>  Competir com outros varejistas de moda, adaptar-se às novas tendências e ao e-commerce, oferecer uma experiência de compra integrada. <br><strong>Objetivo:</strong>  Ser a marca de moda preferida dos brasileiros, oferecendo produtos de qualidade e estilo a preços acessíveis."
+}, 
+// Taxa
+{
+    min: 10,
+    max: 50,
+    ganhoPorcento: 5,
+    ganhoValor: 3000,
+    quedaAcima: 40,
+    quedaPorcento: 20
+});
+square[36] = new Square("AirBnB", "#FF5733", "loja", 2000, -0.15, 30, {
+    descricao: "Investir em parcerias locais, aumentando as reservas e a arrecadação em R$500.",
+    efeito: function (p) {
+        p.lojas[36].arrecadacaoBase += 500;
+        addAlert(p.nome + " investiu em parcerias locais no AirBnB, aumentando as reservas e a arrecadação futura.");
+    },
+    descricaoLoja: "<br><strong>Descrição da Empresa:</strong> Plataforma online de aluguel de acomodações por temporada, conecta viajantes e anfitriões, oferecendo opções diversas de hospedagem. <br><strong>Processos:</strong>  Gerenciamento de anúncios, sistema de reservas, pagamentos online, atendimento ao cliente, garantia para anfitriões e viajantes. <br><strong>Departamentos:</strong> Tecnologia, Produto, Marketing, Atendimento ao Cliente,  Comunidade. <br><strong>Produto/Serviço:</strong>  Plataforma online de aluguel de acomodações por temporada. <br><strong>Desafios:</strong>  Lidar com a regulamentação do aluguel por temporada, garantir a segurança de anfitriões e viajantes, expandir para novos mercados, desenvolver novas funcionalidades e serviços. <br><strong>Objetivo:</strong>  Criar um mundo onde qualquer pessoa possa pertencer a qualquer lugar, conectando pessoas por meio de viagens e experiências autênticas."
+}, 
+// Taxa
+{
+    min: 5,
+    max: 40,
+    ganhoPorcento: 1,
+    ganhoValor: 2000,
+    quedaAcima: 30,
+    quedaPorcento: 15
+});
+square[37] = new Square("C&A", "#FFB6C1", "loja", 2500, -0.15, 35, {
+    descricao: "Expandir o varejo digital, aumentando as vendas em 15% nas próximas rodadas.",
+    efeito: function (p) {
+        p.lojas[37].arrecadacaoBase *= 1.15;
+        addAlert(p.nome + " expandiu o varejo digital da C&A, aumentando as vendas em 15% nas próximas rodadas.");
+    },
+    descricaoLoja: "<br><strong>Descrição da Empresa:</strong>  Varejista internacional de moda, com foco em roupas e acessórios para toda a família, com forte presença em lojas físicas e online.<br><strong>Processos:</strong>  Design, produção, logística, gestão de lojas físicas e online, marketing e vendas omnichannel.<br><strong>Departamentos:</strong>  Design, Produção, Logística, Vendas, Marketing, Tecnologia,  Atendimento ao Cliente, Recursos Humanos.<br><strong>Produto/Serviço:</strong>  Roupas e acessórios de moda.<br><strong>Desafios:</strong>  Competir com outros varejistas de moda, adaptar-se às novas tendências e ao e-commerce, fortalecer a presença digital.<br><strong>Objetivo:</strong>  Oferecer moda acessível e inspiradora para todos."
+}, 
+// Taxa
+{
+    min: 15,
+    max: 50,
+    ganhoPorcento: 5,
+    ganhoValor: 2500,
+    quedaAcima: 35,
+    quedaPorcento: 15
+});
+square[38] = new Square("Kabum", "#7B68EE", "loja", 3500, -0.15, 40, {
+    descricao: "Investir em otimização logística, dobrando a arrecadação na próxima rodada.",
+    efeito: function (p) {
+        p.proximaArrecadacaoDobrada = true;
+        addAlert(p.nome + " otimizou a logística do Kabum, dobrando a arrecadação nas próximas rodadas.");
+    },
+    descricaoLoja: "<br><strong>Descrição da Empresa:</strong>  Varejista online brasileiro de tecnologia e eletrônicos, com foco em computadores, smartphones, games e outros produtos. <br><strong>Processos:</strong>  E-commerce, logística e entrega rápida, atendimento ao cliente especializado em tecnologia, marketing e vendas online. <br><strong>Departamentos:</strong>  Vendas, Marketing, Logística, Tecnologia,  Atendimento ao Cliente,  Compras. <br><strong>Produto/Serviço:</strong>  Produtos de tecnologia e eletrônicos. <br><strong>Desafios:</strong>  Competir com outros varejistas de tecnologia, lidar com a rápida obsolescência de produtos tecnológicos, oferecer preços competitivos e entregas rápidas. <br><strong>Objetivo:</strong>  Ser a principal referência em tecnologia e games para os consumidores brasileiros, oferecendo a melhor experiência de compra online."
+}, 
+// Taxa
+{
+    min: 10,
+    max: 50,
+    ganhoPorcento: 5,
+    ganhoValor: 3500,
+    quedaAcima: 40,
+    quedaPorcento: 15
+});
+square[39] = new Square("IMPOSTO DE LUXO", "#FFFFFF", "impostoLuxo", 100);
+
+jogo.js:
+
+function adicionarAlerta(textoAlerta) {
+    $alert = $("#alert");
+
+    // Percorre o array de jogadores para encontrar o jogador atual e colorir o nome
+  for (var i = 1; i <= numeroJogadores; i++) {
+    var jogador = jogadores[i];
+    var regexJogador = new RegExp(jogador.nome, 'g');
+    textoAlerta = textoAlerta.replace(regexJogador, "<span style='color: " + jogador.cor + "; font-weight: bold;'>" + jogador.nome + "</span>");
+  }
+
+    // Percorre o array de casas para encontrar as lojas e criar links clicáveis (Info Lojas - Tem que clica)
+    //for (var i = 0; i < square.length; i++) {
+    // var casa = square[i];
+    //  if (casa.tipo === "loja") {
+    // Substitui o nome da loja no texto por um link clicável
+    //   textoAlerta = textoAlerta.replace(casa.nome, "<a href='#' onclick='showdeed(" + i + "); return false;'>" + casa.nome + "</a>");
+    //   }
+    // }
+
+     // Percorre o array de casas para encontrar as lojas e criar links clicáveis
+  for (var i = 0; i < square.length; i++) {
+    var casa = square[i];
+    if (casa.tipo === "loja") {
+      var regexLoja = new RegExp(casa.nome, 'g');
+      textoAlerta = textoAlerta.replace(regexLoja, "<a href='#' onclick='showdeed(" + i + "); return false;' onmouseover='showdeed(" + i + ");' onmouseout='hidedeed();'>" + casa.nome + "</a>");
+    }
+  }
+
+  // Adiciona o alerta estilizado ao terminal
+  $(document.createElement("div")).html(textoAlerta).appendTo($alert);
+
+  $alert.stop().animate({ scrollTop: $alert.prop("scrollHeight") }, 1000);
+}
+
+guardei de novo:
+
+function adicionarAlerta(textoAlerta) {
+    $alert = $("#alert");
+
+    // Percorre o array de jogadores para encontrar o jogador atual e colorir o nome
+  for (var i = 1; i <= numeroJogadores; i++) {
+    var jogador = jogadores[i];
+    var regexJogador = new RegExp(jogador.nome, 'g');
+    textoAlerta = textoAlerta.replace(regexJogador, "<span style='color: " + jogador.cor + "; font-weight: bold;'>" + jogador.nome + "</span>");
+  }
+
+    // Percorre o array de casas para encontrar as lojas e criar links clicáveis (Info Lojas - Tem que clica)
+    //for (var i = 0; i < square.length; i++) {
+    // var casa = square[i];
+    //  if (casa.tipo === "loja") {
+    // Substitui o nome da loja no texto por um link clicável
+    //   textoAlerta = textoAlerta.replace(casa.nome, "<a href='#' onclick='showdeed(" + i + "); return false;'>" + casa.nome + "</a>");
+    //   }
+    // }
+
+     // Percorre o array de casas para encontrar as lojas e criar links clicáveis
+  for (var i = 0; i < square.length; i++) {
+    var casa = square[i];
+    if (casa.tipo === "loja") {
+      var regexLoja = new RegExp(casa.nome, 'g');
+      textoAlerta = textoAlerta.replace(regexLoja, "<a href='#' onclick='showdeed(" + i + "); return false;' onmouseover='showdeed(" + i + ");' onmouseout='hidedeed();'>" + casa.nome + "</a>");
+    }
+  }
+
+  // Adiciona o alerta estilizado ao terminal
+  $(document.createElement("div")).html(textoAlerta).appendTo($alert);
+
+  $alert.stop().animate({ scrollTop: $alert.prop("scrollHeight") }, 1000);
+}
