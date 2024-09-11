@@ -97,8 +97,7 @@ td {
 	border: 2px solid blue;
 	margin: 5px;
 	padding: 3px;
-	width: 150px;
-	/* Aumentado para acomodar "Taxa Restante" */
+	width: 150px; /* Aumentado para acomodar "Taxa Restante" */
 }
 
 #pname {
@@ -367,14 +366,14 @@ td {
 	position: fixed;
 	border: 2px solid black;
 	width: 235px;
-	height: auto;
+	height: auto; 
 	background-color: white;
 	z-index: 18;
 	-webkit-user-select: none;
 	user-select: none;
 }
 
-#deed td {
+#deed td{
 	border: none;
 }
 
@@ -449,22 +448,18 @@ td {
 }
 
 #deed-loja {
-	position: relative;
-	/* Adicione esta linha para tornar o deed-loja um container de posicionamento */
+    position: relative; /* Adicione esta linha para tornar o deed-loja um container de posicionamento */
 }
 
 #fecharLoja {
-	position: absolute;
-	top: 10px;
-	/* Ajuste a posição vertical conforme necessário */
-	right: 10px;
-	/* Ajuste a posição horizontal conforme necessário */
-	background-color: transparent;
-	border: none;
-	font-size: 14px;
-	cursor: pointer;
-	z-index: 10;
-	/* Garante que o botão fique acima do deed-header */
+  position: absolute;
+  top: 10px;          /* Ajuste a posição vertical conforme necessário */
+  right: 10px;         /* Ajuste a posição horizontal conforme necessário */
+  background-color: transparent;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  z-index: 10;         /* Garante que o botão fique acima do deed-header */
 }
 
 .menu-item:hover {
@@ -690,7 +685,7 @@ td {
 	left: 0px;
 	/* border-radius: 50%; Adicione esta linha para criar círculos */
 	/* z-index: 2;          Garante que a cor do jogador fique visível sobre a célula */
-}
+  }
 
 .cell-owner {
 	background-size: cover;
@@ -731,107 +726,107 @@ td {
 }
 
 .taxacao-bar {
-	height: 5px;
-	/* Defina a altura desejada */
-	width: 0%;
-	/* Inicialmente, a barra terá largura 0 */
-	background-color: red;
-	/* Defina a cor padrão da barra */
-	margin-top: 2px;
-	/* Ajuste o espaçamento conforme necessário */
-}
+	height: 5px; /* Defina a altura desejada */
+	width: 0%; /* Inicialmente, a barra terá largura 0 */
+	background-color: red; /* Defina a cor padrão da barra */
+	margin-top: 2px; /* Ajuste o espaçamento conforme necessário */
+  }
 
-.loja-img {
-	position: absolute;
-	/* Posiciona a imagem em relação à célula */
-	top: 10%;
-	/* Ajuste a posição vertical conforme necessário */
-	left: 10%;
-	/* Ajuste a posição horizontal conforme necessário */
-	max-width: 80%;
-	/* Ajuste a largura máxima conforme necessário */
-	max-height: 80%;
-	/* Ajuste a altura máxima conforme necessário */
-	z-index: 1;
-	/* Garante que a imagem fique acima do nome da loja */
-}
-
-.board-left .loja-img,
+  .loja-img {
+	position: absolute;   /* Posiciona a imagem em relação à célula */
+	top: 10%;             /* Ajuste a posição vertical conforme necessário */
+	left: 10%;            /* Ajuste a posição horizontal conforme necessário */
+	max-width: 80%;        /* Ajuste a largura máxima conforme necessário */
+	max-height: 80%;       /* Ajuste a altura máxima conforme necessário */
+	z-index: 1;           /* Garante que a imagem fique acima do nome da loja */
+  }
+  
+.board-left .loja-img, 
 .board-right .loja-img {
-	left: 50%;
-	/* Centraliza horizontalmente */
-	transform: translateX(-50%);
-	/* Ajusta a posição para centralizar corretamente */
+  left: 50%; /* Centraliza horizontalmente */
+  transform: translateX(-50%); /* Ajusta a posição para centralizar corretamente */
 }
 
 #lojaDescricaoRow {
-	font-size: 10px;
-	/* Ajuste o tamanho da fonte conforme necessário */
-}
+	font-size: 10px; /* Ajuste o tamanho da fonte conforme necessário */
+  }
 
-.loja-img-popup {
-	position: absolute;
-	/* Use posicionamento absoluto para controlar a posição */
-	top: 0;
-	/* Alinha ao topo do container */
-	left: 0;
-	/* Alinha à esquerda do container */
-	max-width: 20%;
-	/* Ajuste a largura máxima conforme necessário */
-	max-height: 20%;
-	/* Ajuste a altura máxima conforme necessário */
-}
+  .loja-img-popup {
+	position: absolute; /* Use posicionamento absoluto para controlar a posição */
+	top: 0;               /* Alinha ao topo do container */
+	left: 0;              /* Alinha à esquerda do container */
+	max-width: 20%;        /* Ajuste a largura máxima conforme necessário */
+	max-height: 20%;       /* Ajuste a altura máxima conforme necessário */
+  }
 
+/* Centraliza o popup no meio da tela */
 #resumoRegras {
-	margin-left: 20px;
-	/* Adiciona um espaçamento entre o tabuleiro e o resumo */
-	background-color: #eee;
-	padding: 10px;
-	border-radius: 5px;
+    margin: 0;
+    background-color: #fff;
+    padding: 25px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-family: 'Arial', sans-serif;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1001;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-#resumoRegras h2 {
-	margin-top: 0;
+#resumoRegras:hover {
+    transform: translate(-50%, -52%); /* Popup sobe levemente */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Aumenta a sombra ao passar o mouse */
 }
 
-#resumoRegras ul {
-	padding: 0;
-	list-style: none;
+/* Escurece o fundo */
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5); /* Fundo escuro translúcido */
+    z-index: 1000; /* Abaixo do popup */
+    display: none; /* Mantém oculto por padrão */
 }
 
-#resumoRegras li {
-	margin-bottom: 5px;
+/* Exibe o overlay quando o popup estiver ativo */
+#overlay.active, #resumoRegras.active {
+    display: block;
 }
 
-#jogo {
-	display: flex;
-	text-align: left;
+/* Botão de fechar no popup */
+#fecharResumo {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #ff4d4d;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    color: white;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
 }
 
-#moneybarwrap2 {
-	position: absolute;
-	min-width: 135px;
-	top: 200px;
-	right: 100px;
-	-webkit-user-select: none;
-	user-select: none;
+#fecharResumo:hover {
+    background-color: #ff1a1a;
 }
 
+/* Garantindo que o elemento que estava causando problema no fundo seja removido */
 #moneybar2 {
-	float: right;
-	border: 0px solid black;
-	background-color: white;
-	margin: 15px;
-	border-radius: 5px;
-	display: none;
-	z-index: 14;
-	position: relative;
-	cursor: default;
-	-webkit-user-select: none;
-	user-select: none;
+    background-color: transparent;
+    border: none;
+    display: none;
 }
 
-#moneybar2 table {
-	font-weight: bold;
-	border-spacing: 1px;
-}
+
+

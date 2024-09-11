@@ -224,6 +224,21 @@ $(document).ready(function () {
     }
   });
 
+   // Função para fechar o resumo das regras
+   $("#fecharResumo").click(function() {
+    $("#resumoRegras").hide();
+  });
+
+  $(document).ready(function() {
+    // ... (seu código anterior) ...
+  
+    // Função para fechar o resumo das regras
+    $("#fecharResumo").click(function() {
+      $("#linhaResumoRegras").hide(); // Esconde a linha da tabela
+    });
+  
+  });
+
   $("body").on("mouseup", function () {
     drag = false;
   });

@@ -769,8 +769,8 @@ function iniciarJogo() {
         jogadores[arrayJogadores[i - 1]].index = arrayJogadores[i - 1];
     }
 
-    $("#board, #moneybar").show();
     $("#setup").hide();
+    $("#moneybar2").show();
 
     if (numeroJogadores === 2) {
         document.getElementById("stats").style.width = "454px";
@@ -781,6 +781,7 @@ function iniciarJogo() {
     document.getElementById("stats").style.top = "0px";
     document.getElementById("stats").style.left = "0px";
 
+    $("#moneybarwrap2").show(); 
     $("#nextbutton").click(jogo.proximo);
 
     $(document).on("tabuleiroPronto", function () {
