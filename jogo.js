@@ -63,12 +63,15 @@ function Jogador(nome, corIngles) {
     this.lojas = [];
     this.proximaArrecadacaoDobrada = false;
     this.ultimaPosicao = 0;
-    this.pay = function (valor) {
-        this.money -= valor;
-        if (this.money < 0) {
-            this.money = 0;
+    this.pay = function(valor) {
+        // Verifica se o jogador tem dinheiro suficiente
+        if (this.money >= valor) {
+          this.money -= valor;
+        } else {
+          this.money = 0; // Define o dinheiro como 0 se o valor for maior que o disponível
+          addAlert(this.nome + " não tem dinheiro suficiente para pagar a penalidade. Seu dinheiro foi zerado."); // Adiciona um alerta
         }
-    };
+      };
 
     // Inicializa as propriedades das lojas para cada jogador
     for (var i = 0; i < square.length; i++) {
@@ -106,9 +109,8 @@ function adicionarAlerta(textoAlerta) {
     // Percorre o array de jogadores para encontrar o jogador atual
     for (var i = 1; i <= numeroJogadores; i++) {
         var jogador = jogadores[i];
-
-        // Substitui o nome do jogador no texto por um span com a cor do jogador
-        textoAlerta = textoAlerta.replace(jogador.nome, "<span style='color: " + jogador.cor + "; font-weight: bold;'>" + jogador.nome + "</span>");
+        var regexJogador = new RegExp(jogador.nome, 'g');
+        textoAlerta = textoAlerta.replace(regexJogador, "<span style='color: " + jogador.cor + "; font-weight: bold;'>" + jogador.nome + "</span>");
     }
 
     // Percorre o array de casas para encontrar as lojas e criar links clicáveis (Info Lojas - Tem que clica)
@@ -264,13 +266,13 @@ function atualizarCoresJogadores() {
 
         // Verifica se o jogador está na cadeia
         if (posicao === 30) { // Posição da cadeia
-            var cellPositionHolder = document.getElementById("jailpositionholder"); 
+            var cellPositionHolder = document.getElementById("jailpositionholder");
             // Define a borda da célula da cadeia com a cor do jogador (se for o jogador atual)
             if (i === turno) {
                 document.getElementById("jail").style.border = "2px solid " + jogador.cor;
             }
         } else {
-            var cellPositionHolder = document.getElementById("cell" + posicao + "positionholder"); 
+            var cellPositionHolder = document.getElementById("cell" + posicao + "positionholder");
             // Define a borda da célula normal com a cor do jogador (se for o jogador atual)
             if (i === turno) {
                 document.getElementById("cell" + posicao).style.border = "2px solid " + jogador.cor;
@@ -324,7 +326,11 @@ function atualizarArrecadacao() {
 
         $("#moneybarrow" + i).show();
         document.getElementById("p" + i + "moneybar").style.border = "2px solid " + j_i.cor;
-        document.getElementById("p" + i + "money").innerHTML = j_i.money;
+
+        // Formata o dinheiro com vírgula e duas casas decimais
+        var dinheiroFormatado = j_i.money.toFixed(2).replace(".", ",");
+        document.getElementById("p" + i + "money").innerHTML = dinheiroFormatado;
+
         document.getElementById("p" + i + "moneyname").innerHTML = j_i.nome;
     }
 
@@ -461,11 +467,11 @@ function pousar() {
         case "impostoLuxo":
             pagarTaxaLuxo();
             break;
-            case "cadeia":
-                j.posicao = 30; // Define a posição do jogador como 30 (cadeia)
-                atualizarCoresJogadores(); // Atualiza a posição do jogador no tabuleiro
-                adicionarAlerta(j.nome + " foi para a cadeia!");
-                break;
+        case "cadeia":
+            j.posicao = 30; // Define a posição do jogador como 30 (cadeia)
+            atualizarCoresJogadores(); // Atualiza a posição do jogador no tabuleiro
+            adicionarAlerta(j.nome + " foi para a cadeia!");
+            break;
         case "paradaLivre":
             // Nenhuma ação especial para parada livre
             break;
@@ -570,40 +576,71 @@ function aplicarTaxaLoja(taxa) {
     atualizarArrecadacao();
     atualizarCoresJogadores();
 
-    // Escolha secundária (se houver)
+    // Desabilita o botão de escolha secundária
+    $("#landed input[value='Executar Escolha Secundária']").prop("disabled", true);
+
+    // Remove o botão "Aplicar Taxa" do HTML
+    $("#landed input[value='Aplicar Taxa']").prop("disabled", true);
+
+    // Escolha secundária (se houver) - (Perguntava se quer fazer a esscolha secundaria)
     if (s.escolhaSecundaria) {
-        mostrarEscolhaSecundaria(j);
+        //    mostrarEscolhaSecundaria(j);
     } else {
-        finalizarTurno();
+        finalizarTurno(); // Chama finalizarTurno apenas se não houver escolha secundária
+    }
+}
+
+function mostrarCartaEscolhaSecundaria(index) {
+    var carta = cartasEscolhaSecundaria[index];
+    if (carta) {
+        popup(
+            "<img src='images/chance_icon.png' style='height: 50px; width: 26px; float: left; margin: 8px 8px 8px 0px;' /><div style='font-weight: bold; font-size: 16px; '>Carta de Evento:</div><div style='text-align: justify;'>" +
+            carta.text +
+            "</div>",
+            function () {
+                carta.action(jogadores[turno]);
+                finalizarTurno(true); // Finaliza o turno após executar a ação da carta
+            }
+        );
+    } else {
+        console.error("Carta de escolha secundária não encontrada para o índice:", index);
     }
 }
 
 function executarEscolhaSecundaria() {
     var j = jogadores[turno];
     var s = square[j.posicao];
-  
+
     if (s.escolhaSecundaria) {
-      s.escolhaSecundaria.efeito(j); // Executa o efeito da escolha secundária
-      atualizarCoresJogadores();
-      finalizarTurno();
+        mostrarCartaEscolhaSecundaria(j.posicao);
+        //s.escolhaSecundaria.efeito(j); // Executa o efeito da escolha secundária
+        atualizarCoresJogadores();
+        //finalizarTurno();`
+
+        // Desabilita o botão de aplicar taxa
+        $("#landed input[value='Aplicar Taxa']").prop("disabled", true);
+
+        // Desabilita o botão de escolha secundária
+        $("#landed input[value='Executar Escolha Secundária']").prop("disabled", true);
     }
-  
+
     // **CÓDIGO ANTIGO**
     // Avalia a string da função escolhaSecundaria
     // var escolhaSecundariaFunc = eval(s.escolhaSecundaria);
-  
+
     // Chama a função com o objeto jogador como argumento
     // s.escolhaSecundaria.efeito(j);
-  
+
     // Chama a função efeito dentro do objeto escolhaSecundaria
     // if (s.escolhaSecundaria) {
     //     s.escolhaSecundaria.efeito(j);
     //     atualizarCoresJogadores();
     //     finalizarTurno();
     // }
-  
+
     // finalizarTurno();
-  }
+    //finalizarTurno(true); 
+}
 
 function mostrarEscolhaSecundaria(jogador) { // Recebe o jogador como argumento
     var s = square[jogador.posicao];
@@ -698,7 +735,7 @@ function jogoTerminou() {
     //    if (jogadores[i].voltasCompletas < 4) {
     //        return false; // Se algum jogador não completou 4 voltas, o jogo continua
     //    }
-   // }
+    // }
 
     //return true; // Se todos os jogadores completaram 4 voltas, o jogo termina
 }
@@ -804,6 +841,10 @@ function showdeed(index) {
         var descricaoHTML = "<tr><td colspan='2'>" + s.escolhaSecundaria.descricaoLoja + "</td></tr>";
         document.getElementById("lojaDescricaoRow").innerHTML = descricaoHTML;
 
+        // Formata a arrecadação base
+        var arrecadacaoBaseFormatada = s.arrecadacaoBase.toFixed(2).replace(".", ",");
+        document.getElementById("deed-arrecadacaoBase").textContent = arrecadacaoBaseFormatada;
+
         var arrecadacaoTotal = s.arrecadacaoBase * (s.taxaAtual / 100);
         if (s.taxaAtual > s.limiteTaxacao) {
             arrecadacaoTotal *= 1 + s.impactoVendas;
@@ -816,14 +857,19 @@ function hidedeed() {
     $("#deed").hide();
 }
 
-function finalizarTurno() {
+function finalizarTurno(escolhaSecundariaExecutada = false) {
     if (jogadores[turno].money >= valorObjetivo) {
         fimDeJogo();
         return;
     }
 
-    mostrarCartaEvento();
-    jogar();
+    // Mostra a carta de evento apenas se a escolha secundária não foi executada
+    if (!escolhaSecundariaExecutada) {
+        mostrarCartaEvento();
+    }
+
+    //mostrarCartaEvento();
+    //jogar();
 }
 
 function fimDeJogo() {
@@ -831,7 +877,10 @@ function fimDeJogo() {
         return (maior.money > atual.money) ? maior : atual;
     });
 
-    alert("Fim de Jogo! O jogador " + vencedor.nome + " venceu com R$" + vencedor.money.toFixed(2) + " de arrecadação!");
+    // Formata o dinheiro do vencedor
+    var dinheiroFormatado = vencedor.money.toFixed(2).replace(".", ",");
+
+    alert("Fim de Jogo! O jogador " + vencedor.nome + " venceu com R$" + dinheiroFormatado + " de arrecadação!");
 
     $("#control").hide();
     $("#board").hide();
