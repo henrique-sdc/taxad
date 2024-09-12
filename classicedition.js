@@ -508,28 +508,28 @@ cartasEvento.push(new Card("Investimento em tecnologia! Escolha uma loja para te
 }));
 
 // AliExpress
-cartasEscolhaSecundaria[1] = new Card("Investir em logística na AliExpress", function (p) {
+cartasEscolhaSecundaria[1] = new Card("Investir em logística na AliExpress.", function (p) {
     p.lojas[1].impactoVendas += 0.10;
     addAlert(p.nome + " investiu em logística na AliExpress, diminuindo o impacto negativo da taxa nas vendas em 10%.");
     finalizarTurno(true); // Finaliza o turno após executar a escolha secundária
 });
 
 // Shopee
-cartasEscolhaSecundaria[3] = new Card("Fazer uma campanha de marketing na Shopee", function (p) {
+cartasEscolhaSecundaria[3] = new Card("Fazer uma campanha de marketing na Shopee.", function (p) {
     p.proximaArrecadacaoDobrada = true;
     addAlert(p.nome + " investiu em marketing na Shopee, dobrando a arrecadação na próxima rodada.");
     finalizarTurno(true); 
 });
 
 // Shein
-cartasEscolhaSecundaria[5] = new Card("Expandir o catálogo de produtos da Shein", function (p) {
+cartasEscolhaSecundaria[5] = new Card("Expandir o catálogo de produtos da Shein.", function (p) {
     p.lojas[5].arrecadacaoBase += 500;
     addAlert(p.nome + " expandiu o catálogo da Shein, aumentando a arrecadação base para R$" + p.lojas[5].arrecadacaoBase + ".");
     finalizarTurno(true); 
 });
 
 // Pix
-cartasEscolhaSecundaria[7] = new Card("Implementar transações rápidas no Pix", function (p) {
+cartasEscolhaSecundaria[7] = new Card("Implementar transações rápidas no Pix.", function (p) {
     p.money += p.lojas[7].arrecadacaoBase * 0.5 * (1 + p.lojas[7].taxaAtual / 100);
     p.lojas[7].arrecadacaoBase *= 0.95;
     addAlert(p.nome + " implementou transações rápidas no Pix, aumentando a arrecadação em 50% nesta rodada, mas reduzindo a arrecadação base em 5% para a próxima.");
@@ -537,14 +537,14 @@ cartasEscolhaSecundaria[7] = new Card("Implementar transações rápidas no Pix"
 });
 
 // Mercado Livre
-cartasEscolhaSecundaria[9] = new Card("Melhorar o suporte ao cliente do Mercado Livre", function (p) {
+cartasEscolhaSecundaria[9] = new Card("Melhorar o suporte ao cliente do Mercado Livre.", function (p) {
     p.lojas[9].impactoVendas += 0.05;
     addAlert(p.nome + " melhorou o suporte ao cliente do Mercado Livre, diminuindo o impacto negativo da taxa nas vendas em 5%.");
     finalizarTurno(true); 
 });
 
 // Amazon
-cartasEscolhaSecundaria[11] = new Card("Melhorar a logística da Amazon", function (p) {
+cartasEscolhaSecundaria[11] = new Card("Melhorar a logística da Amazon.", function (p) {
     p.lojas[11].impactoVendas += 0.10;
     addAlert(p.nome + " melhorou a logística da Amazon, diminuindo o impacto negativo da taxa nas vendas em 10%.");
     finalizarTurno(true); 
@@ -559,147 +559,147 @@ cartasEscolhaSecundaria[13] = new Card("Reduzir as taxas em 5% para aumentar as 
 });
 
 // Netshoes
-cartasEscolhaSecundaria[15] = new Card("Investir em tecnologia na Netshoes", function (p) {
+cartasEscolhaSecundaria[15] = new Card("Investir em tecnologia na Netshoes.", function (p) {
     p.proximaArrecadacaoDobrada = true;
     addAlert(p.nome + " investiu em tecnologia na Netshoes, dobrando a arrecadação na próxima rodada.");
     finalizarTurno(true); 
 });
 
 // iFood
-cartasEscolhaSecundaria[17] = new Card("Investir em inovações tecnológicas no iFood", function (p) {
+cartasEscolhaSecundaria[17] = new Card("Investir em inovações tecnológicas no iFood.", function (p) {
     p.lojas[17].arrecadacaoBase *= 1.2;
     addAlert(p.nome + " investiu em inovações tecnológicas no iFood, aumentando as vendas em 20% nas próximas rodadas.");
     finalizarTurno(true); 
 });
 
 // eBay
-cartasEscolhaSecundaria[18] = new Card("Investir em expansão internacional no eBay", function (p) {
+cartasEscolhaSecundaria[18] = new Card("Investir em expansão internacional no eBay.", function (p) {
     p.lojas[18].arrecadacaoBase *= 1.25;
     addAlert(p.nome + " expandiu o eBay internacionalmente, aumentando as vendas em 25% na próxima rodada.");
     finalizarTurno(true); 
 });
 
 // Growth
-cartasEscolhaSecundaria[19] = new Card("Aumentar a produção da Growth", function (p) {
+cartasEscolhaSecundaria[19] = new Card("Aumentar a produção da Growth.", function (p) {
     p.lojas[19].arrecadacaoBase += 500;
     addAlert(p.nome + " aumentou a produção da Growth, aumentando a arrecadação base para R$" + p.lojas[19].arrecadacaoBase + ".");
     finalizarTurno(true); 
 });
 
 // Netflix
-cartasEscolhaSecundaria[21] = new Card("Investir em conteúdo original na Netflix", function (p) {
+cartasEscolhaSecundaria[21] = new Card("Investir em conteúdo original na Netflix.", function (p) {
     p.lojas[21].arrecadacaoBase += 1000;
     addAlert(p.nome + " investiu em conteúdo original na Netflix, aumentando a arrecadação base para R$" + p.lojas[21].arrecadacaoBase + ".");
     finalizarTurno(true); 
 });
 
 // Disney+
-cartasEscolhaSecundaria[22] = new Card("Lançar um plano familiar no Disney+", function (p) {
+cartasEscolhaSecundaria[22] = new Card("Lançar um plano familiar no Disney+.", function (p) {
     p.proximaArrecadacaoDobrada = true;
     addAlert(p.nome + " lançou um plano familiar no Disney+, dobrando a arrecadação na próxima rodada.");
     finalizarTurno(true); 
 });
 
 // TikTok
-cartasEscolhaSecundaria[23] = new Card("Fechar uma parceria com influenciadores no TikTok", function (p) {
+cartasEscolhaSecundaria[23] = new Card("Fechar uma parceria com influenciadores no TikTok.", function (p) {
     p.proximaArrecadacaoDobrada = true;
     addAlert(p.nome + " fechou uma parceria com influenciadores no TikTok, dobrando a arrecadação nas próximas rodadas.");
     finalizarTurno(true); 
 });
 
 // Kwai
-cartasEscolhaSecundaria[24] = new Card("Investir em ferramentas de criação de conteúdo no Kwai", function (p) {
+cartasEscolhaSecundaria[24] = new Card("Investir em ferramentas de criação de conteúdo no Kwai.", function (p) {
     p.lojas[24].arrecadacaoBase *= 1.1;
     addAlert(p.nome + " investiu em ferramentas de criação de conteúdo no Kwai, aumentando a arrecadação em 10% nas próximas rodadas.");
     finalizarTurno(true); 
 });
 
 // Uber
-cartasEscolhaSecundaria[25] = new Card("Investir em carros autônomos na Uber", function (p) {
+cartasEscolhaSecundaria[25] = new Card("Investir em carros autônomos na Uber.", function (p) {
     p.lojas[25].arrecadacaoBase *= 1.3;
     addAlert(p.nome + " investiu em carros autônomos na Uber, aumentando a arrecadação em 30% nas próximas rodadas.");
     finalizarTurno(true); 
 });
 
 // Casas Bahia
-cartasEscolhaSecundaria[26] = new Card("Iniciar uma campanha de descontos nas Casas Bahia", function (p) {
+cartasEscolhaSecundaria[26] = new Card("Iniciar uma campanha de descontos nas Casas Bahia.", function (p) {
     p.lojas[26].impactoVendas += 0.15;
     addAlert(p.nome + " iniciou uma campanha de descontos nas Casas Bahia, aumentando as vendas em 15% nas próximas rodadas.");
     finalizarTurno(true); 
 });
 
 // Zara
-cartasEscolhaSecundaria[27] = new Card("Expandir o marketing digital da Zara", function (p) {
+cartasEscolhaSecundaria[27] = new Card("Expandir o marketing digital da Zara.", function (p) {
     p.lojas[27].arrecadacaoBase *= 1.15;
     addAlert(p.nome + " expandiu o marketing digital da Zara, aumentando as vendas em 15% nas próximas rodadas.");
     finalizarTurno(true); 
 });
 
 // WebMotors
-cartasEscolhaSecundaria[28] = new Card("Investir em otimização da plataforma da WebMotors", function (p) {
+cartasEscolhaSecundaria[28] = new Card("Investir em otimização da plataforma da WebMotors.", function (p) {
     p.proximaArrecadacaoDobrada = true;
     addAlert(p.nome + " otimizou a plataforma da WebMotors, dobrando a arrecadação na próxima rodada.");
     finalizarTurno(true); 
 });
 
 // LG
-cartasEscolhaSecundaria[29] = new Card("Investir em pesquisa e desenvolvimento na LG", function (p) {
+cartasEscolhaSecundaria[29] = new Card("Investir em pesquisa e desenvolvimento na LG.", function (p) {
     p.lojas[29].arrecadacaoBase *= 1.2;
     addAlert(p.nome + " investiu em pesquisa e desenvolvimento na LG, aumentando a arrecadação em 20% nas próximas rodadas.");
     finalizarTurno(true); 
 });
 
 // Samsung
-cartasEscolhaSecundaria[31] = new Card("Investir em inovação de produtos da Samsung", function (p) {
+cartasEscolhaSecundaria[31] = new Card("Investir em inovação de produtos da Samsung.", function (p) {
     p.proximaArrecadacaoDobrada = true;
     addAlert(p.nome + " inovou nos produtos da Samsung, dobrando a arrecadação nas próximas rodadas.");
     finalizarTurno(true); 
 });
 
 // Natura
-cartasEscolhaSecundaria[32] = new Card("Investir em sustentabilidade na Natura", function (p) {
+cartasEscolhaSecundaria[32] = new Card("Investir em sustentabilidade na Natura.", function (p) {
     p.lojas[32].arrecadacaoBase *= 1.15;
     addAlert(p.nome + " investiu em sustentabilidade na Natura, aumentando as vendas em 15% nas próximas rodadas.");
     finalizarTurno(true); 
 });
 
 // Avon
-cartasEscolhaSecundaria[33] = new Card("Aumentar a rede de revendedores da Avon", function (p) {
+cartasEscolhaSecundaria[33] = new Card("Aumentar a rede de revendedores da Avon.", function (p) {
     p.proximaArrecadacaoDobrada = true;
     addAlert(p.nome + " expandiu a rede de revendedores da Avon, dobrando a arrecadação na próxima rodada.");
     finalizarTurno(true); 
 });
 
 // O'Boticário
-cartasEscolhaSecundaria[34] = new Card("Aumentar a produção nacional do O'Boticário", function (p) {
+cartasEscolhaSecundaria[34] = new Card("Aumentar a produção nacional do O'Boticário.", function (p) {
     p.lojas[34].arrecadacaoBase *= 1.15;
     addAlert(p.nome + " aumentou a produção nacional do O'Boticário, aumentando as vendas em 15% nas próximas rodadas.");
     finalizarTurno(true); 
 });
 
 // Renner
-cartasEscolhaSecundaria[35] = new Card("Expandir a presença online da Renner", function (p) {
+cartasEscolhaSecundaria[35] = new Card("Expandir a presença online da Renner.", function (p) {
     p.proximaArrecadacaoDobrada = true;
     addAlert(p.nome + " expandiu a presença online da Renner, dobrando a arrecadação na próxima rodada.");
     finalizarTurno(true); 
 });
 
 // AirBnB
-cartasEscolhaSecundaria[36] = new Card("Investir em parcerias locais no AirBnB", function (p) {
+cartasEscolhaSecundaria[36] = new Card("Investir em parcerias locais no AirBnB.", function (p) {
     p.lojas[36].arrecadacaoBase += 500;
     addAlert(p.nome + " investiu em parcerias locais no AirBnB, aumentando as reservas e a arrecadação futura.");
     finalizarTurno(true); 
 });
 
 // C&A
-cartasEscolhaSecundaria[37] = new Card("Expandir o varejo digital da C&A", function (p) {
+cartasEscolhaSecundaria[37] = new Card("Expandir o varejo digital da C&A.", function (p) {
     p.lojas[37].arrecadacaoBase *= 1.15;
     addAlert(p.nome + " expandiu o varejo digital da C&A, aumentando as vendas em 15% nas próximas rodadas.");
     finalizarTurno(true); 
 });
 
 // Kabum
-cartasEscolhaSecundaria[38] = new Card("Investir em otimização logística no Kabum", function (p) {
+cartasEscolhaSecundaria[38] = new Card("Investir em otimização logística no Kabum.", function (p) {
     p.proximaArrecadacaoDobrada = true;
     addAlert(p.nome + " otimizou a logística do Kabum, dobrando a arrecadação nas próximas rodadas.");
     finalizarTurno(true); 

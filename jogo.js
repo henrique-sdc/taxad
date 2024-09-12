@@ -65,6 +65,7 @@ function Jogador(nome, corIngles) {
     this.lojas = [];
     this.proximaArrecadacaoDobrada = false;
     this.ultimaPosicao = 0;
+    this.naCadeia = false;
     this.pay = function(valor) {
         // Verifica se o jogador tem dinheiro suficiente
         if (this.money >= valor) {
@@ -453,6 +454,7 @@ function pousar() {
             
                         // Adiciona alertas informando a transação
                         addAlert(j.nome + " pagou R$" + valorTaxa.toFixed(2).replace(".", ",") + " de taxa para " + jogadores[s.dono].nome + " pela loja " + s.nome + ".");
+                        
                         finalizarTurno();
                     } else if (s.dono === turno) {
                         // Se o jogador é o dono da loja, mostra apenas a opção de escolha secundária
@@ -513,7 +515,7 @@ function pousar() {
             pagarTaxaLuxo();
             break;
         case "cadeia":
-            j.posicao = 30; // Define a posição do jogador como 30 (cadeia)
+            j.posicao = 10; // Define a posição do jogador como 30 (cadeia)
             atualizarCoresJogadores(); // Atualiza a posição do jogador no tabuleiro
             adicionarAlerta(j.nome + " foi para a cadeia!");
             break;
@@ -545,6 +547,19 @@ function pousar() {
 function calcularTaxa(arrecadacaoBase, taxaAtual) {
     return arrecadacaoBase * (taxaAtual / 100);
   }
+
+// Função para comprar uma loja
+function comprarLoja(jogador, loja) {
+    if (jogador.money >= loja.arrecadacaoBase) {
+        jogador.pay(loja.arrecadacaoBase); // Paga o valor da loja
+        loja.dono = jogadores.indexOf(jogador); // Define o jogador atual como dono da loja
+        addAlert(jogador.nome + " comprou a loja " + loja.nome + " por R$" + loja.arrecadacaoBase.toFixed(2).replace(".", ",") + ".");
+        atualizarCoresJogadores();
+    } else {
+        addAlert(jogador.nome + " não tem dinheiro suficiente para comprar a loja " + loja.nome + ".");
+    }
+    finalizarTurno();
+}
 
 // Função para calcular o impacto da taxa
 function calcularImpactoTaxa(taxaLoja, valorTaxa) { // Recebe taxaLoja como argumento
@@ -783,6 +798,14 @@ function rolarDados() {
     addAlert(j.nome + " ganhou 10% de taxa adicional por completar 3 jogadas.");
     contadorJogadas = 0; // Reseta o contador de jogadas
   }
+
+  // Verifica se o jogador está na cadeia
+  if (j.naCadeia) {
+    j.naCadeia = false; // Libera o jogador da cadeia após uma rodada
+    adicionarAlerta(j.nome + " saiu da cadeia!");
+    finalizarTurno(); // Passa a vez para o próximo jogador
+    return; // Sai da função rolarDados
+}
 
 
     document.getElementById("nextbutton").value = "Finalizar Turno";

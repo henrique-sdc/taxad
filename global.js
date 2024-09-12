@@ -1,6 +1,6 @@
 var jogadores = [];
 var turno = 0;
-var valorObjetivo = 50000;
+var valorObjetivo = 15000;
 
 // Propriedades de taxa das lojas
 var taxas = {
