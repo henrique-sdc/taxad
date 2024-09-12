@@ -1,3 +1,5 @@
+var contadorJogadas = 0;
+var jogadorAgiu = false;
 var square = getSquare();
 // Dicionário de cores em português para inglês
 var cores = {
@@ -317,7 +319,7 @@ function atualizarCoresJogadores() {
 function atualizarArrecadacao() {
     var j = jogadores[turno];
 
-    document.getElementById("pmoney").innerHTML = "R$" + j.money;
+    document.getElementById("pmoney").innerHTML = "R$" + j.money.toFixed(2).replace(".", ",");
     document.getElementById("pTaxaRestante").innerHTML = j.taxaTotal + "%";
     $(".money-bar-row").hide();
 
@@ -436,31 +438,74 @@ function pousar() {
         case "inicio":
             // Nenhuma ação especial para o início.
             break;
-        case "loja":
-            if (taxas[s.nome]) {
-                var taxaLoja = taxas[s.nome];
-                var inputTaxacaoHTML =
-                    "<div>Defina a taxa para " +
+            case "loja":
+                if (taxas[s.nome]) {
+                    var taxaLoja = taxas[s.nome];
+            
+                    // Verifica se a loja já foi taxada por outro jogador
+                    if (s.dono !== 0 && s.dono !== turno) {
+                        // Calcula o valor da taxa a ser paga ao dono da loja
+                        var valorTaxa = calcularTaxa(s.arrecadacaoBase, s.taxaAtual);
+            
+                        // Jogador atual paga a taxa ao dono da loja
+                        j.pay(valorTaxa);
+                        jogadores[s.dono].money += valorTaxa;
+            
+                        // Adiciona alertas informando a transação
+                        addAlert(j.nome + " pagou R$" + valorTaxa.toFixed(2).replace(".", ",") + " de taxa para " + jogadores[s.dono].nome + " pela loja " + s.nome + ".");
+                        finalizarTurno();
+                    } else if (s.dono === turno) {
+                        // Se o jogador é o dono da loja, mostra apenas a opção de escolha secundária
+                        if (s.escolhaSecundaria && !jogadorAgiu) {
+                            var escolhaSecundariaHTML = "<p>" + s.escolhaSecundaria.descricao + "</p>";
+                            escolhaSecundariaHTML += "<input type='button' value='Executar Escolha Secundária' onclick='executarEscolhaSecundaria();'>";
+                            document.getElementById("landed").innerHTML = escolhaSecundariaHTML;
+                        } else {
+                            finalizarTurno();
+                        }
+                    } else {
+                        // Se a loja não tem dono:
+                        if (!jogadorAgiu) {
+                            // Mostra as opções de taxar e executar a escolha secundária
+                            var inputTaxacaoHTML =
+                                "<div>Defina a taxa para " +
+                                s.nome +
+                                " (" + taxaLoja.min + "% -" + taxaLoja.max + "%): <input type='number' id='inputTaxacao' min='" + taxaLoja.min + "' max='" + taxaLoja.max + "' value='" + taxaLoja.min + "'></div>";
+                            inputTaxacaoHTML +=
+                                "<p>Impacto: " +
+                                calcularImpactoTaxa(taxaLoja, taxaLoja.min) +
+                                "</p>";
+                            inputTaxacaoHTML +=
+                                "<input type='button' value='Aplicar Taxa' onclick='aplicarTaxaLoja(parseInt(document.getElementById(\"inputTaxacao\").value, 10));'>";
+            
+                            // Adiciona a descrição da escolha secundária
+                            if (s.escolhaSecundaria) {
+                                inputTaxacaoHTML += "<p>" + s.escolhaSecundaria.descricao + "</p>";
+                                inputTaxacaoHTML +=
+                                  "<input type='button' value='Executar Escolha Secundária' onclick='executarEscolhaSecundaria();'>";
+                            }
+            
+                            document.getElementById("landed").innerHTML = inputTaxacaoHTML;
+            
+                            // Adiciona um evento para atualizar o impacto da taxa ao alterar o valor do input
+                            $("#inputTaxacao").on("input", function () {
+                              var valorTaxa = parseInt($(this).val(), 10);
+                              $("#landed > p").text(
+                                "Impacto: " + calcularImpactoTaxa(taxaLoja, valorTaxa)
+                              );
+                            });
+                        } else {
+                            finalizarTurno();
+                        }
+                    }
+                } else {
+                  console.error(
+                    "Erro na casa",
                     s.nome +
-                    " (" + taxaLoja.min + "% -" + taxaLoja.max + "%): <input type='number' id='inputTaxacao' min='" + taxaLoja.min + "' max='" + taxaLoja.max + "' value='" + taxaLoja.min + "'></div>";
-
-                inputTaxacaoHTML += "<p>Impacto: " + calcularImpactoTaxa(taxaLoja, taxaLoja.min) + "</p>";
-
-                inputTaxacaoHTML += "<input type='button' value='Aplicar Taxa' onclick='aplicarTaxaLoja(parseInt(document.getElementById(\"inputTaxacao\").value, 10));'>";
-
-                // Adiciona a descrição da escolha secundária de volta
-                if (s.escolhaSecundaria) {
-                    inputTaxacaoHTML += "<p>" + s.escolhaSecundaria.descricao + "</p>";
-                    inputTaxacaoHTML += "<input type='button' value='Executar Escolha Secundária' onclick='executarEscolhaSecundaria();'>";
+                      ": a propriedade 'taxa' não está definida no objeto global 'taxas'."
+                  );
                 }
-
-                document.getElementById("landed").innerHTML = inputTaxacaoHTML;
-
-                // ... (código para atualizar o impacto da taxa) ...
-            } else {
-                console.error("Erro na casa", s.nome + ": a propriedade 'taxa' não está definida no objeto global 'taxas'.");
-            }
-            break;
+                break;
         case "especial":
             s.escolhaSecundaria(j);
             break;
@@ -487,14 +532,19 @@ function pousar() {
 
     if (j.posicao < j.ultimaPosicao) {
         j.voltasCompletas++;
-        j.taxaTotal += 10;
+        j.taxaTotal += 30;
         adicionarAlerta(
             j.nome +
-            " completou uma volta no tabuleiro e ganhou 10% de taxa adicional."
+            " completou uma volta no tabuleiro e ganhou 30% de taxa adicional."
         );
     }
     j.ultimaPosicao = j.posicao;
 }
+
+// Função para calcular o valor da taxa a ser paga
+function calcularTaxa(arrecadacaoBase, taxaAtual) {
+    return arrecadacaoBase * (taxaAtual / 100);
+  }
 
 // Função para calcular o impacto da taxa
 function calcularImpactoTaxa(taxaLoja, valorTaxa) { // Recebe taxaLoja como argumento
@@ -570,17 +620,55 @@ function aplicarTaxaLoja(taxa) {
 
     // Atualiza a barra de taxação da loja
     var taxacaoBar = document.getElementById("cell" + j.posicao + "taxacao-bar");
-    taxacaoBar.style.width = taxa + "%"; // Define a largura da barra de acordo com a taxa
+    taxacaoBar.style.width = taxa + "%"; // Define a largura da barra de acordo com a taxa`
+    
+    // Exibe a barra de taxação e aplica a cor do jogador usando o ID único
+  var barraTaxacao = $("#barra-taxacao-" + j.posicao); 
+  barraTaxacao.show();
+  
+  // Aplica a cor de fundo da barra diretamente com base na cor do jogador
+  if (j.cor) {
+    var barraTaxacao = $("#barra-taxacao-" + j.posicao);
+    barraTaxacao.show();
+    barraTaxacao.css("background-color", j.cor); // Define a cor de fundo da barra
+    barraTaxacao.css("filter", "hue-rotate(" + getHueRotation(j.cor) + "deg)"); // Aplica o filtro, se necessário
+} else {
+    console.error("Cor do jogador inválida:", j.cor);
+}
+  
     taxacaoBar.style.backgroundColor = j.cor; // Define a cor da barra com a cor do jogador
 
     atualizarArrecadacao();
     atualizarCoresJogadores();
+
+   // Exibe a barra de taxação e aplica a cor do jogador usando o ID único
+   var barraTaxacao = $("#barra-taxacao-" + j.posicao); // Seleciona a barra pelo ID
+   barraTaxacao.show();
+   barraTaxacao.css("filter", "hue-rotate(" + getHueRotation(j.cor) + "deg)"); // Aplica a cor
+   
+   // Remove qualquer classe anterior de posicionamento
+   barraTaxacao.removeClass("barra-taxacao-superior barra-taxacao-esquerda barra-taxacao-direita");
+   
+   // Verifica a posição e adiciona a classe CSS correta e a classe .board-left ou .board-right
+   if (isTopPosition(j.posicao)) {
+       barraTaxacao.addClass("barra-taxacao-superior");
+   } else if (isLeftPosition(j.posicao)) {
+       barraTaxacao.addClass("barra-taxacao-esquerda board-left"); // Adiciona .board-left
+   } else if (isRightPosition(j.posicao)) {
+       barraTaxacao.addClass("barra-taxacao-direita board-right"); // Adiciona .board-right
+   }
+
+
+
+// Remove qualquer classe anterior
+barraTaxacao.removeClass("barra-taxacao-superior barra-taxacao-esquerda barra-taxacao-direita");
 
     // Desabilita o botão de escolha secundária
     $("#landed input[value='Executar Escolha Secundária']").prop("disabled", true);
 
     // Remove o botão "Aplicar Taxa" do HTML
     $("#landed input[value='Aplicar Taxa']").prop("disabled", true);
+    $("#landed input[value='Executar Escolha Secundária']").prop("disabled", true);
 
     // Escolha secundária (se houver) - (Perguntava se quer fazer a esscolha secundaria)
     if (s.escolhaSecundaria) {
@@ -589,6 +677,37 @@ function aplicarTaxaLoja(taxa) {
         finalizarTurno(); // Chama finalizarTurno apenas se não houver escolha secundária
     }
 }
+
+// Funções para verificar a posição da célula
+function isTopPosition(posicao) {
+    return posicao >= 21 && posicao <= 29;
+  }
+  
+  function isBottomPosition(posicao) {
+    return posicao >= 1 && posicao <= 9;
+  }
+  
+  function isLeftPosition(posicao) {
+    return (posicao === 0 || posicao === 10 || posicao === 20 || posicao === 30);
+  }
+  
+  function isRightPosition(posicao) {
+    return (posicao === 9 || posicao === 19 || posicao === 29 || posicao === 39);
+  }
+
+// Função auxiliar para calcular a rotação de matiz (hue)
+function getHueRotation(cor) {
+  switch (cor) {
+    case "red": return 0;
+    case "yellow": return 60;
+    case "green": return 20; // Verifique se o ângulo para verde está correto
+    case "cyan": return 180;
+    case "blue": return 340; // Verifique se o ângulo para azul está correto
+    case "magenta": return 300;
+    default: return 0; 
+  }
+}
+
 
 function mostrarCartaEscolhaSecundaria(index) {
     var carta = cartasEscolhaSecundaria[index];
@@ -651,10 +770,20 @@ function mostrarEscolhaSecundaria(jogador) { // Recebe o jogador como argumento
 function rolarDados() {
     var j = jogadores[turno];
 
-    if (j.money >= valorObjetivo) {
-        fimDeJogo();
-        return;
-    }
+  if (j.money >= valorObjetivo) {
+    fimDeJogo();
+    return;
+  }
+
+  contadorJogadas++; // Incrementa o contador de jogadas
+
+  // Verifica se o jogador já fez 3 jogadas
+  if (contadorJogadas >= 3) {
+    j.taxaTotal += 10; // Adiciona 10% à taxa total do jogador
+    addAlert(j.nome + " ganhou 10% de taxa adicional por completar 3 jogadas.");
+    contadorJogadas = 0; // Reseta o contador de jogadas
+  }
+
 
     document.getElementById("nextbutton").value = "Finalizar Turno";
     document.getElementById("nextbutton").title =
@@ -673,8 +802,8 @@ function rolarDados() {
     if (j.posicao > 39) {
         j.posicao -= 40;
         j.voltasCompletas++;
-        j.taxaTotal += 10;
-        adicionarAlerta(j.nome + " completou uma volta no tabuleiro passando pela " + square[j.posicao].nome + " ganhou 10% de taxa adicional.");
+        j.taxaTotal += 30;
+        adicionarAlerta(j.nome + " completou uma volta no tabuleiro passando pela " + square[j.posicao].nome + " ganhou 30% de taxa adicional.");
     }
 
     pousar();
@@ -865,7 +994,8 @@ function finalizarTurno(escolhaSecundariaExecutada = false) {
     }
 
     // Mostra a carta de evento apenas se a escolha secundária não foi executada
-    if (!escolhaSecundariaExecutada) {
+    // Chama mostrarCartaEvento apenas nas condições corretas
+    if (!escolhaSecundariaExecutada && (square[jogadores[turno].posicao].tipo !== "loja" || square[jogadores[turno].posicao].dono === 0)) {
         mostrarCartaEvento();
     }
 

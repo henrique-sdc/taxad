@@ -1062,10 +1062,10 @@ function pousar() {
 
     if (j.posicao < j.ultimaPosicao) {
         j.voltasCompletas++;
-        j.taxaTotal += 10;
+        j.taxaTotal += 30;
         adicionarAlerta(
             j.nome +
-            " completou uma volta no tabuleiro e ganhou 10% de taxa adicional."
+            " completou uma volta no tabuleiro e ganhou 30% de taxa adicional."
         );
     }
     j.ultimaPosicao = j.posicao;
@@ -1161,8 +1161,8 @@ function rolarDados() {
     if (j.posicao > 39) { // Corrigido: usar 39 para o último índice do array
         j.posicao -= 40;
         j.voltasCompletas++;
-        j.taxaTotal += 10; 
-        adicionarAlerta(j.nome + " completou uma volta no tabuleiro e ganhou 10% de taxa adicional.");
+        j.taxaTotal += 30; 
+        adicionarAlerta(j.nome + " completou uma volta no tabuleiro e ganhou 30% de taxa adicional.");
     }
 
     pousar();

@@ -773,7 +773,7 @@ td {
     overflow-y: auto;
     position: fixed;
     top: 50%;
-    left: 50%;
+    left: 70%;
     transform: translate(-50%, -50%);
     z-index: 1001;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -828,5 +828,49 @@ td {
     display: none;
 }
 
+/* Estilos básicos da barra-taxacao */
+.barra-taxacao {
+    width: 80%;
+    height: auto;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+	background-color: grey; /* Cor padrão para a barra */
+}
 
+/* Estilos específicos para a barra superior (herda de barra-taxacao) */
+.barra-taxacao-superior {
+    top: -24px; /* Posição para cima */
+}
 
+/* Estilos específicos para a barra no lado esquerdo (herda de barra-taxacao) */
+.barra-taxacao-esquerda {
+    width: auto;
+    height: 20%;
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+}
+
+/* Estilos específicos para a barra no lado direito (herda de barra-taxacao) */
+.barra-taxacao-direita {
+    width: auto;
+    height: 20%;
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+}
+
+/* Estilos para barras verticais */
+.board-left .barra-taxacao, 
+.board-right .barra-taxacao {
+  width: auto;
+  height: 20%; /* Ajuste a altura conforme necessário */
+  position: absolute;
+  left: -49px; /* Ajuste a posição horizontal conforme necessário */
+  top: 50%;
+  transform: translateY(-50%) rotate(90deg); /* Centraliza verticalmente e gira 90 graus */
+}

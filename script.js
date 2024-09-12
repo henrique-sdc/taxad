@@ -60,6 +60,26 @@ $(document).ready(function () {
       lojaImg.src = "images/lojas/" + square[i].nome + ".png"; // Define o caminho da imagem
       lojaImg.className = "loja-img"; // Adicione uma classe para estilizar a imagem
       currentCellAnchor.appendChild(lojaImg);
+
+      var barraTaxacao = document.createElement("img");
+      barraTaxacao.src = "images/hori-bar.png"; 
+barraTaxacao.className = "barra-taxacao"; // Mantenha a classe padrão
+barraTaxacao.id = "barra-taxacao-" + i;
+barraTaxacao.style.display = "none";
+currentCellAnchor.appendChild(barraTaxacao);
+
+// Define a classe da célula de acordo com a sua posição
+if (i >= 1 && i <= 9) {
+  currentCell.classList.add("board-bottom");
+} else if (i >= 11 && i <= 19) {
+  currentCell.classList.add("board-left");
+} else if (i >= 21 && i <= 29) {
+  currentCell.classList.add("board-top");
+} else if (i >= 31 && i <= 39) {
+  currentCell.classList.add("board-right");
+} else {
+  currentCell.classList.add("board-corner");
+}
     }
 
     document.getElementById("enlarge" + i + "color").style.backgroundColor = s.cor;
